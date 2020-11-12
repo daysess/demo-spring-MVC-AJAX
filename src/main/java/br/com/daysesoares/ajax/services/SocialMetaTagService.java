@@ -32,6 +32,7 @@ public class SocialMetaTagService {
 	
 	private SocialMetaTag getTwitterCardByUrl(String url) {
 		SocialMetaTag tag = new SocialMetaTag();
+		
 		try {
 			Document doc = Jsoup.connect(url).get();
 			tag.setTitle(doc.head().select("meta[name=twitter:title]").attr("content"));
@@ -63,10 +64,10 @@ public class SocialMetaTagService {
 	}
 	
 	private boolean isEmpty(SocialMetaTag tag){
-		if(tag.getImage().isEmpty()) return true;
-		if(tag.getSite().isEmpty()) return true;
-		if(tag.getTitle().isEmpty()) return true;
-		if(tag.getUrl().isEmpty()) return true;
+		if(tag.getImage()== null || tag.getImage().isEmpty()) return true;
+		if(tag.getSite() == null || tag.getSite().isEmpty()) return true;
+		if(tag.getTitle() == null || tag.getTitle().isEmpty()) return true;
+		if(tag.getUrl() == null || tag.getUrl().isEmpty()) return true;
 		return false;
 	}
 
