@@ -21,4 +21,11 @@ public class Categoria {
 	@OneToMany(mappedBy = "categoria")
 	private List<Promocao> promocoes;
 
+	@Override
+	public String toString() {
+		return "Categoria: {id=" + id + ", titulo=" + titulo + "}";
+	}
+	
+	
+
 }
