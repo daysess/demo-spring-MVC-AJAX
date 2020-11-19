@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import br.com.daysesoares.ajax.domain.Categoria;
 import br.com.daysesoares.ajax.domain.Promocao;
 import br.com.daysesoares.ajax.repository.CategoriaRepository;
 import br.com.daysesoares.ajax.repository.PromocaoRepository;
+import br.com.daysesoares.ajax.services.PromocaoDataTablesService;
 
 @Controller
 @RequestMapping("/promocao")
@@ -110,6 +112,17 @@ public class PromocaoController {
 		PageRequest pageRequest = PageRequest.of(0, 8, sort);
 		model.addAttribute("promocoes", promocaoRepository.findBySite(site, pageRequest));
 		return "promo-card";
+	}
+	
+	@GetMapping("/tabela")
+	public String showTabela() {
+		return "promo-datatables";
+	}
+	
+	@GetMapping("/datatables/server")
+	public ResponseEntity<?> datatables(HttpServletRequest request){
+		Map<String, Object> data = new PromocaoDataTablesService().execute(promocaoRepository, request);
+		return ResponseEntity.ok(data);
 	}
 	
 	
