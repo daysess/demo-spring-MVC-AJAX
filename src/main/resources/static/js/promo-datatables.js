@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	
+	moment.locale('pt-br');
 	$("#table-server").DataTable({
 		processing: true,
 		serverSide: true,
@@ -16,11 +16,49 @@ $(document).ready(function(){
 			{data: 'linkPromocao'},
 			{data: 'descricao'},
 			{data: 'linkImagem'},
-			{data: 'preco'},
+			{data: 'preco', render: $.fn.dataTable.render.number('.', ',', 2, 'R$')},
 			{data: 'likes'},
-			{data: 'dtCadastro'},
+			{data: 'dtCadastro', render:
+					function(dtCadastro){
+						return moment(dtCadastro).format('LLL');
+					}
+			},
 			{data: 'categoria.titulo'}
+		],
+		dom: 'Bfrtip',
+		buttons: [
+			{
+				text: 'Editar',
+				attr: {
+					id: 'btn-editar',
+					type: 'button'
+				}
+			},
+			{
+				text: 'Excluir',
+				attr: {
+					id: 'btn-exlcluir',
+					type: 'button'
+				}
+			}
 		]
+	});
+	
+	$("#table-server tbody").on('click', 'tr', function(){
+		if($(this).hasClass('selected')){
+			$(this).removeClass('selected');
+		}else{
+			$('tr.selected').removeClass('selected');
+			$(this).addClass('selected');
+		}
+	});
+	
+	$("#btn-editar").on('click', function(){
+		alert('Click no botão editar');
+	});
+	
+	$("#btn-excluir").on('click', function(){
+		alert('Click no botão excluir');
 	});
 	
 });

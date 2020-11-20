@@ -1,5 +1,6 @@
 package br.com.daysesoares.ajax.services;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -30,9 +31,10 @@ public class PromocaoDataTablesService {
 		
 		String column = columnName(request);
 		Sort.Direction direction = orderBy(request) ;
+		String search =  searchBy(request);
 		
 		PageRequest pageRequest = PageRequest.of(current, length, direction, column);
-		Page<Promocao> page = queryBy(repository, pageRequest);
+		Page<Promocao> page = queryBy(search, repository, pageRequest);
 		
 		Map<String, Object> json = new LinkedHashMap<>();
 		json.put("draw", draw);
@@ -43,8 +45,23 @@ public class PromocaoDataTablesService {
 		return json;
 	}
 	
-	private Page<Promocao> queryBy(PromocaoRepository repository, PageRequest pageRequest) {
-		return repository.findAll(pageRequest);
+	private String searchBy(HttpServletRequest request) {
+		return request.getParameter("search[value]").isEmpty() 
+				? ""
+				: request.getParameter("search[value]");
+	}
+
+	private Page<Promocao> queryBy(String search, PromocaoRepository repository, PageRequest pageRequest) {
+		
+		if(search.isEmpty()) {
+			return repository.findAll(pageRequest);
+		}
+		if(search.matches("^[0-9]+([.,][0-9]{2})?$")) {
+			search = search.replace(",", ".");
+			return repository.findByPreco(new BigDecimal(search), pageRequest);
+					
+		}
+		return repository.findByTituloOrSiteOrCategoria(search, pageRequest);
 	}
 
 	private Direction orderBy(HttpServletRequest request) {
