@@ -68,6 +68,11 @@ $(document).ready(function(){
 				method: "GET",
 				url: "/promocao/edit/" + id,
 				beforeSend: function(){
+					// removendo as mensagens
+					$("span").closest('.error-span').remove();
+					// remover as bordas vermelhas
+					$(".is-invalid").removeClass("is-invalid");
+					//abre o modal
 					$("#modal-form").modal('show');
 				},
 				success: function(data){
@@ -90,6 +95,52 @@ $(document).ready(function(){
 			
 			
 		}
+	});
+	
+	$("#btn-edit-modal").on("click", function(){
+		var promo = {};
+		promo.descricao = $("#edt_descricao").val();
+		promo.preco = $("#edt_preco").val();
+		promo.titulo = $("#edt_titulo").val();
+		promo.categoria = $("#edt_categoria").val();
+		promo.linkImagem = $("#edt_linkImagem").val();
+		promo.id  = $("#edt_id").val();
+		
+		$.ajax({
+			method: "POST",
+			url: "/promocao/edit",
+			data: promo,
+			beforeSend: function(){
+				// removendo as mensagens
+				$("span").closest('.error-span').remove();
+				// remover as bordas vermelhas
+				$(".is-invalid").removeClass("is-invalid");				
+			},
+			success: function(){
+				$("#modal-form").modal("hide");
+				table.ajax.reload();
+			},
+			statusCode: {
+				422: function(xhr) {
+						console.log('status error: ', xhr.status);
+						var errors = $.parseJSON(xhr.responseText);
+						$.each(errors, function(key, val){
+							$("#edt_"+key).addClass("is-invalid");
+							$("#error-"+key)
+								.addClass("invalid-feedback")
+								.append("<span class='error-span'>" +val+ "</span>")
+						});
+						 $("#alert").addClass("alert alert-danger").text("Nenhuma informação pode ser recuperada dessa url.");
+						 $("#linkImagem").attr("src", "/images/promo-dark.png");
+					}
+			}
+		});
+	});
+	
+	//alterar a imagem no componente <img> do modal
+	$("#edt_linkImagem").on("change", function(){
+		var link = $(this).val();
+		$("#edt_imagem").attr("src", link);
 	});
 	
 	$("#btn-excluir").on('click', function(){
